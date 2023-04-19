@@ -1,0 +1,77 @@
+﻿<h2>{{data.post.name}}</h2>
+<p>Zastavice: {{data.post.tags}}</p>
+<h5>{{data.post.description}}</h5>
+<p>Objavil: {{data.post.postedBy}} ob {{data.post.time}}</p>
+<hr />
+{{#if session.user._id}}
+<p>Dodaj komentar</p>
+<div class="w-25">
+    <textarea id="comment" class="form-control mb-2" rows="3" name="comment" placeholder="Komentar" required></textarea>
+    <input id="id" type="text" style="display:none" class="form-control mb-2" rows="3" name="id" value="{{data.post._id}}">
+    <button class="form-control mb-2" onclick="send()">Dodaj komentar</button>
+</div>
+<hr />
+{{/if}}
+<div class="border-start border-dark border-2 ms-5">
+    {{#each data.comment}}
+    <div class="row ml-5">
+        <div class="col-8">
+            <div class="d-flex flex-column">
+                <p class="mb-0"><b>{{postedBy}}</b> {{time}}</p>
+                <p>{{comment}}</p>
+            </div>
+        </div>
+        <div class="col-4 d-flex justify-content-end align-items-start">
+            {{#compare postedBy '==' ../data.session }}
+            <a href="/comments/delete/{{_id}}"><button class="btn btn-danger">Izbriši</button></a>
+            {{/compare}}
+            {{#compare ../data.post.postedBy '==' ../session.user.username }}
+            {{#compare selected '==' "no" }}
+            <button id="mark" class="form-control mb-2 w-25" onclick="markAccepted(this)" value="{{_id}}">Označi sprejeto</button>
+            {{/compare}}
+            {{/compare}}
+            {{#compare selected '==' "yes" }}
+            <p class="mb-2 w-40">Selected Answer!</p>
+            <hr />
+            {{/compare}}
+        </div>
+    </div>
+    {{#compare selected '==' "yes" }}
+    <hr />
+    {{/compare}}
+    <br />
+    {{/each}}
+</div>
+
+<script>
+    function send() {
+        const comment = document.getElementById('comment').value;
+        const id = document.getElementById('id').value;
+        const data = {
+            comment: comment,
+            id: id,
+        };
+        fetch('/comments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(location.reload());
+    }
+
+    function markAccepted(value) {
+        window.alert(value.value);
+        var temp = value.value;
+        const data = {
+            id: temp,
+        };
+        fetch('/comments/mark', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(location.reload());
+    }
+</script>

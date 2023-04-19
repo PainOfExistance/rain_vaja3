@@ -1,0 +1,11 @@
+﻿{{#each data.data}}
+<h2>{{name}}</h2>
+<p>Zastavice: {{tags}}</p>
+<h6>{{description}}</h6>
+<p>Objavil: {{postedBy}} ob {{time}}</p>
+<a href="/photos/show/{{_id}}"><button class="btn btn-dark">Preberi več</button></a>
+{{#compare postedBy '==' ../data.session }}
+<a href="/photos/delete/{{_id}}"><button class="btn btn-danger">Izbriši</button></a>
+{{/compare}}
+<hr />
+{{/each}}

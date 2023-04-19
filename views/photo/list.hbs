@@ -1,0 +1,29 @@
+﻿<div class="input-group">
+    <div class="input-group-append">
+        <button onclick="ask()" class="btn btn-dark">Išči</button>
+    </div>
+    <input class="form-control mb-2" type="text" id="question" placeholder="Naslovite vprasanja" required>
+</div>
+{{#each data.data}}
+<h2>{{name}}</h2>
+<p>Zastavice: {{tags}}</p>
+<h6>{{description}}</h6>
+<p>Objavil: {{postedBy}} ob {{time}}</p>
+<a href="/photos/show/{{_id}}"><button class="btn btn-dark">Preberi več</button></a>
+{{#compare postedBy '==' ../data.session }}
+<a href="/photos/delete/{{_id}}"><button class="btn btn-danger">Izbriši</button></a>
+{{/compare}}
+<hr />
+{{/each}}
+<script>
+    function ask() {
+        var search = document.getElementById('question').value;
+        fetch('/photos/search/' + search, {
+            method: 'GET'
+        }).then(response => response.text())
+            .then(html => {
+                document.documentElement.innerHTML = html;
+                console.log(html);
+            });
+    }
+</script>
